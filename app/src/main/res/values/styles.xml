@@ -1,0 +1,16 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="PaintTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+<style name="PaintTheme.Button" parent="Widget.AppCompat.Button.Colored">
+    <item name="android:colorButtonNormal">#f8f8f8</item>
+    <item name="android:textColor">#000000</item>
+</style>
+
+</resources>
