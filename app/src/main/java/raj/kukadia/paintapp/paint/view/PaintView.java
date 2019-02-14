@@ -5,7 +5,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.os.Build;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import raj.kukadia.paintapp.R;
 import raj.kukadia.paintapp.paint.object.TouchPath;
 
 /**
@@ -21,21 +24,30 @@ import raj.kukadia.paintapp.paint.object.TouchPath;
  * Paint Canvas View
  */
 
-public class PaintView extends View {
 
+//Custom View Class
+public class PaintView extends View{
+
+    //Old x and y coordinates
     public float X, Y;
     public int colour;
     public int strokewidth;
     private Canvas canvas_;
     public static final int DEFAULT_COLOUR = Color.RED;
     public static final int DEFAULT_BACK_COLOUR = Color.WHITE;
-    public static final float TOUCH_TOLERANCE = 4;
+    public static final float TOUCH_TOLERANCE =4;
+    public static final String ERASER_SET = "ERASER_SET";
+    public static final String ERASER_NOT_SET = "ERASER_NOT_SET";
+
     public static final int BRUSH_SIZE = 20;
     private Path path;
     private Paint paint;
     private Bitmap bitmap;
+    private boolean isEraserSet;
+    private int prevColor;
     private int backcolour = DEFAULT_BACK_COLOUR;
     public ArrayList<TouchPath> paths = null;
+    public ArrayList<Object> list = null;
     private Paint bitmapPaint = new Paint(Paint.DITHER_FLAG);
     private Stack<TouchPath> stack = new Stack<>();
 
@@ -55,16 +67,21 @@ public class PaintView extends View {
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setXfermode(null);
         paint.setAlpha(0xff);
+
     }
 
-    public void init(List<Object> list){
 
-        canvas_ = (Canvas) list.get(0);
-        bitmap = (Bitmap) list.get(1);
-        paths = (ArrayList<TouchPath>) list.get(2);
-        colour = (Integer)list.get(3);
+    public void init(List<Object> list, DisplayMetrics displayMetrics){
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+        this.list = (ArrayList<Object>) list;
+        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        canvas_ = new Canvas(bitmap);
+        paths = (ArrayList<TouchPath>) list.get(0);
+        colour = (Integer)list.get(1);
+        prevColor = (int) list.get(3);
+        isEraserSet = (boolean) list.get(2);
         strokewidth = BRUSH_SIZE;
-
     }
 
     @Override
@@ -76,14 +93,46 @@ public class PaintView extends View {
             paint.setStrokeWidth(touchPath.strokewidth);
             canvas_.drawPath(touchPath.path, paint);
         }
-        canvas.drawBitmap(bitmap, 0, 0, bitmapPaint);
+        canvas.drawBitmap(bitmap, 0, 0, bitmapPaint);//?????
         canvas.restore();
+    }
+
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     public void undo(){
         if(paths.size()==0) return;
         stack.add(paths.remove(this.paths.size()-1));
         invalidate();
+    }
+
+    public void setEraser(boolean set){
+        if(set){
+            isEraserSet = true;
+            prevColor = colour;
+            this.colour = Color.WHITE;
+
+        }else{
+            isEraserSet = false;
+            this.colour = prevColor;
+        }
+        list.remove(1);
+        list.add(1, this.colour);
+        list.remove(2);
+        list.add(2,isEraserSet);
+        list.remove(3);
+        list.add(3, prevColor);
+    }
+
+    public String eraserState(){
+        if(isEraserSet){
+            return ERASER_SET;
+        }else{
+            return ERASER_NOT_SET;
+        }
     }
 
     public void redo(){
@@ -102,22 +151,29 @@ public class PaintView extends View {
         invalidate();
     }
 
+    //Create a new Path and Touch Path object
     private void touchDown(float x, float y){
         path = new Path();
         TouchPath touchPath = new TouchPath(colour, strokewidth, path);
+        //add the first touch path
         paths.add(touchPath);
 
+        //clear the path
         path.reset();
+        //Set the beginning of next contour at x and y
         path.moveTo(x, y);
 
         X = x;
         Y = y;
     }
 
+    //Ends the path
     private void touchUp(){
+        //adds a line from the last point to the specified point
         path.lineTo(X, Y);
     }
 
+    //onTouchEvent returns true on the view so continues to draw on this view
     private void touchMove(float x, float y){
         float dx = Math.abs(x-X);
         float dy = Math.abs(y-Y);
@@ -136,6 +192,7 @@ public class PaintView extends View {
 
         switch (event.getAction()){
 
+            //When the user starts to touch
             case MotionEvent.ACTION_DOWN:
                 touchDown(x, y);
                 invalidate();

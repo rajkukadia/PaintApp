@@ -24,6 +24,7 @@ public class PaintFragment extends Fragment {
     private PaintView paintView;
     View rootView;
     int currId;
+    private static final String ERASER_NOT_SET = "ERASER_NOT_SET";
     public PaintFragment() {
     }
 
@@ -34,8 +35,6 @@ public class PaintFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-
     }
 
     @Override
@@ -54,11 +53,11 @@ public class PaintFragment extends Fragment {
             }
         });
 
-        paintViewModel.getCanvas(displayMetrics, currId).observe(this, new Observer<Map<Integer, List<Object>>>() {
+        paintViewModel.getCanvas(currId).observe(this, new Observer<Map<Integer, List<Object>>>() {
             @Override
             public void onChanged(@Nullable Map<Integer, List<Object>> integerListMap) {
                 List<Object> list = integerListMap.get(currId);
-                paintView.init(list);
+                paintView.init(list, displayMetrics);
             }
         });
 
@@ -68,7 +67,7 @@ public class PaintFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(getArguments()!=null){
+        if(getArguments()!=null && eraserState().equals(ERASER_NOT_SET)){
             paintView.changeColor(getArguments().getInt("color"));
         }
     }
@@ -81,11 +80,19 @@ public class PaintFragment extends Fragment {
         paintView.undo();
     }
 
-    public void changeColor(int color){
+    public void changeColor(int color)
+    {
         paintView.changeColor(color);
     }
 
+    public void setEraser(boolean set){
+        paintView.setEraser(set);
+    }
+
+    public String eraserState(){
+        return paintView.eraserState();
+    }
+
+
     public void redo(){paintView.redo();}
-
-
 }

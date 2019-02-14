@@ -1,50 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
 
-android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:paddingTop="10dp"
+    android:background="#ffffff"
     tools:context=".paint.uicontroller.activities.PaintActivity">
-
     <Button
         android:id="@+id/refresh"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:background="@drawable/refresh"
-       />
+        />
 
     <Button
         android:id="@+id/undo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:background="@drawable/custom_button2"
-        android:layout_toRightOf="@id/refresh" />
+        android:layout_toRightOf="@id/refresh"
+        android:layout_toEndOf="@id/refresh" />
 
     <Button
         android:id="@+id/redo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:background="@drawable/custom_button3"
         android:layout_toRightOf="@id/undo"
-        />
+        android:layout_toEndOf="@id/undo" />
 
     <Button
         android:id="@+id/colour"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:background="@drawable/custom_button"
         android:layout_toRightOf="@id/redo"
-        />
+        android:layout_toEndOf="@id/redo" />
+
+    <Button
+        android:id="@+id/eraser"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:background="@drawable/eraser"
+        android:layout_toRightOf="@id/colour"
+        android:layout_toEndOf="@id/colour" />
 
     <FrameLayout
         android:id="@+id/fragment_container"
         android:name="fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/colour">
+        android:layout_below="@id/eraser"
+        >
     </FrameLayout>
 
 </RelativeLayout>
+
+

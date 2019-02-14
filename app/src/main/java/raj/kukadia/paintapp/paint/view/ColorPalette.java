@@ -2,6 +2,7 @@ package raj.kukadia.paintapp.paint.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.RequiresApi;
@@ -11,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -126,20 +129,6 @@ public class ColorPalette extends LinearLayout {
             addView(row);
         }
     }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public void setColors(@ColorInt int[] colors){
-        this.colors = colors;
-        viewInitialized = false;
-        createPaletteView();
-    }
-
-
-    public void setSelectedColor(@ColorInt int color) {
-        selectedColor = color;
-        eventBus.post(new SelectedColorChangedEvent(selectedColor));
-    }
-
 
     private LinearLayout createRow() {
         LinearLayout row = new LinearLayout(getContext());
@@ -258,14 +247,6 @@ public class ColorPalette extends LinearLayout {
         return view;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public void setOutlineWidth(int width) {
-        outlineWidth = width;
-        for (ColorItem item : colorItemList) {
-            item.setOutLineWidth(width);
-        }
-    }
-
     private ImageView createSpacer() {
         ImageView view = new ImageView(getContext());
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(colorItemDimension, colorItemDimension);
@@ -274,26 +255,13 @@ public class ColorPalette extends LinearLayout {
         return view;
     }
 
-    public boolean usesDarkCheckmark(@ColorInt int color) {
-        return ColorUtil.isColorDark(color);
-    }
-
-    public void setFixedColumnCount(int columnCount) {
-        if (columnCount > 0) {
-            hasFixedColumnCount = true;
-            fixedColumnCount = columnCount;
-            requestLayout();
-            invalidate();
-        } else {
-            hasFixedColumnCount = false;
-            fixedColumnCount = -1;
-            requestLayout();
-            invalidate();
-        }
-    }
-
     public interface OnColorSelectedListener {
         void onColorSelected(@ColorInt int color);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
     }
 
     @Subscribe

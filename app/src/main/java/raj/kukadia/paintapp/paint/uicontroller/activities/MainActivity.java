@@ -10,13 +10,15 @@ import raj.kukadia.paintapp.R;
 
 public class MainActivity extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         Button button = findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
+
+            //onClick call back
             @Override
             public void onClick(View v) {
                 startPaintActivity();
@@ -24,11 +26,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -40,5 +40,4 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this,PaintActivity.class);
         startActivity(intent);
     }
-
 }
