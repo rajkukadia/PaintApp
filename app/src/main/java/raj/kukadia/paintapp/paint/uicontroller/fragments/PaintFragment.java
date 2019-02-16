@@ -3,18 +3,24 @@ package raj.kukadia.paintapp.paint.uicontroller.fragments;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Message;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.List;
 import java.util.Map;
 
 import raj.kukadia.paintapp.R;
+import raj.kukadia.paintapp.paint.object.M;
 import raj.kukadia.paintapp.paint.view.PaintView;
 import raj.kukadia.paintapp.paint.viewmodel.PaintViewModel;
 
@@ -93,6 +99,24 @@ public class PaintFragment extends Fragment {
         return paintView.eraserState();
     }
 
-
     public void redo(){paintView.redo();}
+
+    public void saveImage(){
+        Bitmap bitmap = paintView.getBitmap();
+        MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bitmap, "Image1" , "Saved Image1");
+        M.displayLong("saved successfully", getActivity());
+    }
+
+    public void drawCircle(float radius){
+        paintView.wantToDrawCircle(radius);
+    }
+
+    public void drawRect(float x, float y){
+        paintView.wantToDrawRect(x, y);
+    }
+
+    public void setStrokeWidth(float w){
+        paintView.setStrokewidth(w);
+
+    }
 }

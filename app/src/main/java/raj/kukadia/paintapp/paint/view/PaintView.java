@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PointF;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Stack;
 
 import raj.kukadia.paintapp.R;
+import raj.kukadia.paintapp.paint.object.M;
 import raj.kukadia.paintapp.paint.object.TouchPath;
 
 /**
@@ -30,6 +32,7 @@ public class PaintView extends View{
 
     //Old x and y coordinates
     public float X, Y;
+    public float rx, ry;
     public int colour;
     public int strokewidth;
     private Canvas canvas_;
@@ -44,6 +47,9 @@ public class PaintView extends View{
     private Paint paint;
     private Bitmap bitmap;
     private boolean isEraserSet;
+    private boolean drawCircle = false;
+    private boolean drawRect = false;
+    private float radius = -1;
     private int prevColor;
     private int backcolour = DEFAULT_BACK_COLOUR;
     public ArrayList<TouchPath> paths = null;
@@ -67,7 +73,6 @@ public class PaintView extends View{
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setXfermode(null);
         paint.setAlpha(0xff);
-
     }
 
 
@@ -81,18 +86,18 @@ public class PaintView extends View{
         colour = (Integer)list.get(1);
         prevColor = (int) list.get(3);
         isEraserSet = (boolean) list.get(2);
-        strokewidth = BRUSH_SIZE;
+        strokewidth = (int) list.get(4);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.save();
         canvas_.drawColor(DEFAULT_BACK_COLOUR);
-        for(TouchPath touchPath : paths){
-            paint.setColor(touchPath.colour);
-            paint.setStrokeWidth(touchPath.strokewidth);
-            canvas_.drawPath(touchPath.path, paint);
-        }
+            for (TouchPath touchPath : paths) {
+                paint.setColor(touchPath.colour);
+                paint.setStrokeWidth(touchPath.strokewidth);
+                canvas_.drawPath(touchPath.path, paint);
+            }
         canvas.drawBitmap(bitmap, 0, 0, bitmapPaint);//?????
         canvas.restore();
     }
@@ -143,6 +148,8 @@ public class PaintView extends View{
 
     public void changeColor(int color){
         this.colour = color;
+        list.remove(1);
+        list.add(1, this.colour);
     }
 
     public void clear(){
@@ -154,12 +161,17 @@ public class PaintView extends View{
     //Create a new Path and Touch Path object
     private void touchDown(float x, float y){
         path = new Path();
+        if(drawCircle) path.addCircle(x, y,radius, Path.Direction.CW);
+        if(drawRect) path.addRect(x, y, x, y, Path.Direction.CW);
         TouchPath touchPath = new TouchPath(colour, strokewidth, path);
         //add the first touch path
         paths.add(touchPath);
 
         //clear the path
+        if(drawCircle|| drawRect){return;}
+
         path.reset();
+
         //Set the beginning of next contour at x and y
         path.moveTo(x, y);
 
@@ -194,16 +206,22 @@ public class PaintView extends View{
 
             //When the user starts to touch
             case MotionEvent.ACTION_DOWN:
-                touchDown(x, y);
+                if(drawRect) {
+                    touchDown(rx, ry);
+                }else {
+                    touchDown(x, y);
+                }
                 invalidate();
                 break;
 
             case MotionEvent.ACTION_MOVE:
+                if(drawCircle || drawRect){ break;}
                 touchMove(x, y);
                 invalidate();
                 break;
 
             case MotionEvent.ACTION_UP:
+                if(drawCircle || drawRect){drawRect = false; drawCircle = false;break;}
                 touchUp();
                 invalidate();
                 break;
@@ -214,6 +232,29 @@ public class PaintView extends View{
 
     public Canvas getCanvas(){
         return canvas_;
+    }
+
+    public Bitmap getBitmap(){
+        return bitmap;
+    }
+
+
+    public void wantToDrawRect(float x, float y){
+        drawRect = true;
+        rx = x;
+        ry = y;
+    }
+
+
+    public void wantToDrawCircle(float radius){
+        drawCircle = true;
+        this.radius = radius;
+    }
+
+    public void setStrokewidth(float width){
+        strokewidth = (int) width;
+        list.remove(4);
+        list.add(4, strokewidth);
     }
 
 }

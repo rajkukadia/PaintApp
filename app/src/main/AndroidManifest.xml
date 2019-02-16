@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="raj.kukadia.paintapp">
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <supports-screens android:smallScreens="true"
         android:normalScreens="true"
         android:largeScreens="true"
@@ -23,7 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".paint.uicontroller.activities.PaintActivity"></activity>
+        <activity android:name=".paint.uicontroller.activities.PaintActivity" />
     </application>
 
 </manifest>

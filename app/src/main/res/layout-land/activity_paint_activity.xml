@@ -18,6 +18,8 @@
         android:background="@drawable/refresh"
        />
 
+
+
     <Button
         android:id="@+id/undo"
         android:layout_width="wrap_content"
@@ -34,21 +36,35 @@
         android:layout_toRightOf="@id/undo"
         android:layout_toEndOf="@id/undo" />
 
-    <Button
-        android:id="@+id/colour"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/custom_button"
-        android:layout_toRightOf="@id/redo"
-        android:layout_toEndOf="@id/redo" />
 
     <Button
         android:id="@+id/eraser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/eraser"
+        android:layout_toRightOf="@id/redo"
+        android:layout_toEndOf="@id/redo" />
+
+
+    <Button
+        android:id="@+id/colour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/custom_button"
+        android:layout_toRightOf="@id/eraser"
+        android:layout_toEndOf="@id/eraser" />
+
+
+    <Button
+        android:id="@+id/save"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:background="@drawable/save"
         android:layout_toRightOf="@id/colour"
         android:layout_toEndOf="@id/colour" />
+
+
+
 
     <FrameLayout
         android:id="@+id/fragment_container"

@@ -44,6 +44,7 @@ public class PaintViewModel extends AndroidViewModel{
             list.add(Color.RED);
             list.add(Boolean.FALSE);
             list.add(Color.RED);
+            list.add(20);
             if (map == null) map = new HashMap<>();
             map.put(map.size(), list);
             this.canvasMutableLiveData.postValue(map);
